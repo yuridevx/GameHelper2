@@ -111,7 +111,7 @@ namespace GameHelper.RemoteObjects.States.InGameStateObjects
 
             var reader = Core.Process.Handle;
             var data = reader.ReadMemory<ServerDataOffsets>(this.Address);
-            var playerDataArray = reader.ReadStdVector<IntPtr>(data.PlayerServerData);
+            var playerDataArray = reader.ReadStdVector<IntPtr>(data.PlayerServerDataPtr);
             if (playerDataArray.Length == 0)
                 return;
             var playerData = reader.ReadMemory<ServerDataStructure>(playerDataArray[0]);
