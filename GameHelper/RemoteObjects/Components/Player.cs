@@ -26,12 +26,24 @@ namespace GameHelper.RemoteObjects.Components
         public string Name { get; private set; }
 
         /// <summary>
+        ///     Gets the Xp of the player.
+        /// </summary>
+        public int Xp { get; private set; }
+
+        /// <summary>
+        ///     Gets the Level of the player.
+        /// </summary>
+        public int Level { get; private set; }
+
+        /// <summary>
         ///     Converts the <see cref="Player" /> class data to ImGui.
         /// </summary>
         internal override void ToImGui()
         {
             base.ToImGui();
             ImGui.Text($"Player Name: {this.Name}");
+            ImGui.Text($"Xp: {this.Xp}");
+            ImGui.Text($"Level: {this.Level}");
         }
 
         /// <inheritdoc />
@@ -44,6 +56,8 @@ namespace GameHelper.RemoteObjects.Components
             if (hasAddressChanged)
             {
                 this.Name = reader.ReadStdWString(data.Name);
+                this.Xp = data.Xp;
+                this.Level = data.Level;
             }
         }
     }
