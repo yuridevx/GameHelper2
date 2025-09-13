@@ -224,7 +224,7 @@ namespace GameHelper.RemoteObjects.States.InGameStateObjects
             {
                 yield return new Wait(GameHelperEvents.PerFrameDataUpdate);
                 if (this.Address != IntPtr.Zero &&
-                    Core.States.GameCurrentState == GameStateTypes.InGameState)
+                    Core.States.GameCurrentState is GameStateTypes.InGameState or GameStateTypes.EscapeState)
                 {
                     // sending false because "true" use-case is handled
                     // by UpdateData function when address actually gets changed.

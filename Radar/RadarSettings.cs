@@ -35,6 +35,11 @@ namespace Radar
         /// Do not draw the Radar plugin stuff when user is in hideout/town.
         /// </summary>
         public bool DrawWhenNotInHideoutOrTown = true;
+        
+        /// <summary>
+        /// Do not draw the Radar plugin stuff when user is in pause menu.
+        /// </summary>
+        public bool DrawWhenNotPaused = true;
 
         /// <summary>
         /// Hides all the entities that are outside the network bubble.
