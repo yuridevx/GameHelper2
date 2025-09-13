@@ -487,10 +487,6 @@ namespace GameHelper.Settings
                     "do not go below 60 (due to server ticks), no matter how good your latency is.");
                 ImGuiHelper.NonContinuousEnumComboBox("Settings Window Key", ref Core.GHSettings.MainMenuHotKey);
                 ImGuiHelper.NonContinuousEnumComboBox("Disable Rendering Key", ref Core.GHSettings.DisableAllRenderingKey);
-                ImGui.Checkbox("I am using console controller to play the game.", ref Core.GHSettings.EnableControllerMode);
-                ImGuiHelper.ToolTip("This will disable AutoHotkeyTrigger plugin by ensuring all keyboard inputs " +
-                    "that AHK wants to send to the game doesn't reach the game. Feel free to disable that plugin " +
-                    " from top bar if you want to safe some cpu cycles.");
             }
         }
 

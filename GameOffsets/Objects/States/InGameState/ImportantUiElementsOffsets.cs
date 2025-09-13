@@ -9,10 +9,10 @@ namespace GameOffsets.Objects.States.InGameState
     [StructLayout(LayoutKind.Explicit, Pack = 1)]
     public struct ImportantUiElementsOffsets
     {
-        [FieldOffset(0x588)] public IntPtr ChatParentPtr;
-        [FieldOffset(0x6A8)] public IntPtr PassiveSkillTreePanel;
-        [FieldOffset(0x750)] public IntPtr MapParentPtr;
-        [FieldOffset(0xA38)] public IntPtr ControllerModeMapParentPtr;
+        [FieldOffset(0x570)] public IntPtr ChatParentPtr;
+        [FieldOffset(0x690)] public IntPtr PassiveSkillTreePanel;
+        [FieldOffset(0x738)] public IntPtr MapParentPtr;
+        [FieldOffset(0xB40)] public IntPtr ControllerModeMapParentPtr;
     }
 
     [StructLayout(LayoutKind.Explicit, Pack = 1)]
@@ -20,13 +20,6 @@ namespace GameOffsets.Objects.States.InGameState
     {
         [FieldOffset(0x50)] public IntPtr LargeMapPtr; // 1st child ~ reading from cache location
         [FieldOffset(0x58)] public IntPtr MiniMapPtr; // 2nd child ~ reading from cache location
-    }
-
-    [StructLayout(LayoutKind.Explicit, Pack = 1)]
-    public struct MapParentStructController
-    {
-        [FieldOffset(0x58)] public IntPtr LargeMapPtr; // 2st child ~ reading from cache location
-        [FieldOffset(0x60)] public IntPtr MiniMapPtr; // 3nd child ~ reading from cache location
     }
 
     [StructLayout(LayoutKind.Explicit, Pack = 1)]
