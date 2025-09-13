@@ -110,8 +110,12 @@ namespace GameHelper.RemoteObjects.States.InGameStateObjects
             }
 
             var reader = Core.Process.Handle;
-            var data = reader.ReadMemory<ServerDataStructure>(this.Address + ServerDataStructure.SKIP);
-            var inventoryData = reader.ReadStdVector<InventoryArrayStruct>(data.PlayerInventories);
+            var data = reader.ReadMemory<ServerDataOffsets>(this.Address);
+            var playerDataArray = reader.ReadStdVector<IntPtr>(data.PlayerServerDataPtr);
+            if (playerDataArray.Length == 0)
+                return;
+            var playerData = reader.ReadMemory<ServerDataStructure>(playerDataArray[0]);
+            var inventoryData = reader.ReadStdVector<InventoryArrayStruct>(playerData.PlayerInventories);
             this.PlayerInventories.Clear();
             for (var i = 0; i < inventoryData.Length; i++)
             {

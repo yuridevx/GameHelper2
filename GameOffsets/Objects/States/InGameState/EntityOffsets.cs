@@ -35,7 +35,7 @@ namespace GameOffsets.Objects.States.InGameState
     public struct EntityDetails
     {
         [FieldOffset(0x08)] public StdWString name;
-        [FieldOffset(0x30)] public IntPtr ComponentLookUpPtr;
+        [FieldOffset(0x28)] public IntPtr ComponentLookUpPtr;
     }
 
     // DRY this with LoadedFilesOffset

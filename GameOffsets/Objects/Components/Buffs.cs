@@ -24,9 +24,9 @@ namespace GameOffsets.Objects.Components
 
         //[FieldOffset(0x0030)] public long Unknown1;
         //[FieldOffset(0x0038)] public int unknown2;
-        [FieldOffset(0x42)] public short Charges;
-        [FieldOffset(0x44)] public short FlaskSlot; // read flask buff
-        [FieldOffset(0x46)] public short Effectiveness; // read Withering Step skill gem buff
+        [FieldOffset(0x40)] public short Charges;
+        [FieldOffset(0x42)] public short FlaskSlot; // read flask buff
+        [FieldOffset(0x48)] public short Effectiveness; // read Withering Step skill gem buff
         //[FieldOffset(0x0044)] public short PAD_0x44;
         [FieldOffset(0x4A)] public uint UnknownIdAndEquipmentInfo; // same as in Actor.cs offset file -> ActiveSkillDetails struct.
 

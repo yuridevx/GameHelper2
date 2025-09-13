@@ -123,7 +123,7 @@ namespace GameHelper.RemoteObjects.States.InGameStateObjects
             var data1 = reader.ReadMemory<ImportantUiElementsOffsets>(Core.GHSettings.IsTaiwanClient ? this.Address - 0x08 : this.Address);
             if (Core.GHSettings.EnableControllerMode)
             {
-                var data2 = reader.ReadMemory<MapParentStructController>(data1.ControllerModeMapParentPtr);
+                var data2 = reader.ReadMemory<MapParentStruct>(data1.ControllerModeMapParentPtr);
                 this.LargeMap.Address = data2.LargeMapPtr;
                 this.MiniMap.Address = data2.MiniMapPtr;
                 this.ChatParent.Address = IntPtr.Zero;
@@ -224,7 +224,7 @@ namespace GameHelper.RemoteObjects.States.InGameStateObjects
             {
                 yield return new Wait(GameHelperEvents.PerFrameDataUpdate);
                 if (this.Address != IntPtr.Zero &&
-                    Core.States.GameCurrentState == GameStateTypes.InGameState)
+                    Core.States.GameCurrentState is GameStateTypes.InGameState or GameStateTypes.EscapeState)
                 {
                     // sending false because "true" use-case is handled
                     // by UpdateData function when address actually gets changed.

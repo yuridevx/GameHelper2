@@ -7,13 +7,13 @@ namespace GameOffsets.Objects.States.InGameState
     [StructLayout(LayoutKind.Explicit, Pack = 1)]
     public struct AreaInstanceOffsets
     {
-        [FieldOffset(0x0AC)] public byte CurrentAreaLevel;
-        [FieldOffset(0x0EC)] public uint CurrentAreaHash;
+        [FieldOffset(0x0B4)] public byte CurrentAreaLevel;
+        [FieldOffset(0x0F4)] public uint CurrentAreaHash;
         // Env which are activated. Keys can be found in Environments.dat file.
-        [FieldOffset(0x948)] public StdVector Environments; // EnvironmentStruct
-        [FieldOffset(0x9F0)] public LocalPlayerStruct PlayerInfo;
-        [FieldOffset(0xAF8)] public EntityListStruct Entities;
-        [FieldOffset(0xCC0)] public TerrainStruct TerrainMetadata;
+        [FieldOffset(0x968)] public StdVector Environments; // EnvironmentStruct
+        [FieldOffset(0x9F8)] public LocalPlayerStruct PlayerInfo;
+        [FieldOffset(0xB50)] public EntityListStruct Entities;
+        [FieldOffset(0xD18)] public TerrainStruct TerrainMetadata;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -128,22 +128,18 @@ namespace GameOffsets.Objects.States.InGameState
         public static float TileHeightFinalMultiplier = 7.8125f;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 0x38)]
-    public struct TileStructure // size 0x38
+    [StructLayout(LayoutKind.Explicit, Pack = 1, Size = 0x38)]
+    public struct TileStructure
     {
-        public IntPtr SubTileDetailsPtr; // SubTileStruct
-        public IntPtr TgtFilePtr; // TgtFileStruct
-        public StdVector EntitiesList;
-        public IntPtr PAD_0x28;
-        public short TileHeight;
-        public byte PAD_0x32;
-        public byte PAD_0x33;
-        public byte tileIdX;
-        public byte tileIdY;
-        public byte RotationSelector;
-        public byte PAD_0x37;
-        public static int TileToGridConversion = 0x17; // 23
-        public static float TileToWorldConversion = 250f; // 250
+        [FieldOffset(0x0)] public IntPtr SubTileDetailsPtr; // SubTileStruct
+        [FieldOffset(0x8)] public IntPtr TgtFilePtr; // TgtFileStruct
+        [FieldOffset(0x30)] public short TileHeight;
+        [FieldOffset(0x34)] public byte tileIdX;
+        [FieldOffset(0x35)] public byte tileIdY;
+        [FieldOffset(0x36)] public byte RotationSelector;
+        
+        public static int TileToGridConversion = 0x17;
+        public static float TileToWorldConversion = 250f;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

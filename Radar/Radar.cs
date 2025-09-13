@@ -80,6 +80,7 @@ namespace Radar
                 "(e.g. 0.137345) press CTRL + LMB");
             ImGui.Checkbox("Hide Radar when in Hideout/Town", ref this.Settings.DrawWhenNotInHideoutOrTown);
             ImGui.Checkbox("Hide Radar when game is in the background", ref this.Settings.DrawWhenForeground);
+            ImGui.Checkbox("Hide Radar when game is paused", ref this.Settings.DrawWhenNotPaused);
             if (ImGui.Checkbox("Modify Large Map Culling Window", ref this.Settings.ModifyCullWindow))
             {
                 if (this.Settings.ModifyCullWindow)
@@ -198,8 +199,13 @@ namespace Radar
 
                 ImGui.End();
             }
+            
+            if (this.Settings.DrawWhenNotPaused && Core.States.GameCurrentState != GameStateTypes.InGameState)
+            {
+                return;
+            }
 
-            if (Core.States.GameCurrentState != GameStateTypes.InGameState)
+            if (Core.States.GameCurrentState is not (GameStateTypes.InGameState or GameStateTypes.EscapeState))
             {
                 return;
             }
@@ -826,8 +832,7 @@ namespace Radar
 
         private void GenerateMapTexture()
         {
-            if (Core.States.GameCurrentState != GameStateTypes.InGameState &&
-                Core.States.GameCurrentState != GameStateTypes.EscapeState)
+            if (Core.States.GameCurrentState is not (GameStateTypes.InGameState or GameStateTypes.EscapeState))
             {
                 return;
             }

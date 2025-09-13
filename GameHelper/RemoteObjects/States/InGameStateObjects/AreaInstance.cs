@@ -230,7 +230,7 @@ namespace GameHelper.RemoteObjects.States.InGameStateObjects
             }
 
             this.UpdateEnvironmentAndCaches(data.Environments);
-            this.ServerDataObject.Address = reader.ReadMemory<IntPtr>(data.PlayerInfo.ServerDataPtr + 0x68);
+            this.ServerDataObject.Address = data.PlayerInfo.ServerDataPtr;
             this.Player.Address = data.PlayerInfo.LocalPlayerPtr;
             this.UpdateEntities(data.Entities.AwakeEntities, this.AwakeEntities, true);
         }

@@ -5,10 +5,15 @@ namespace GameOffsets.Objects.States.InGameState
     using Natives;
 
     [StructLayout(LayoutKind.Explicit, Pack = 1)]
+    public struct ServerDataOffsets
+    {
+        [FieldOffset(0x50)] public StdVector PlayerServerDataPtr;
+    }
+    
+    [StructLayout(LayoutKind.Explicit, Pack = 1)]
     public struct ServerDataStructure
     {
-        public const int SKIP = 0x6800; // for reducing struct size.
-        [FieldOffset(0x6898 - SKIP)] public StdVector PlayerInventories; // InventoryArrayStruct
+        [FieldOffset(0x320)] public StdVector PlayerInventories; // InventoryArrayStruct
     }
 
     [StructLayout(LayoutKind.Explicit, Pack = 1)]

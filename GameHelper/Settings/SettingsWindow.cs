@@ -85,12 +85,12 @@ namespace GameHelper.Settings
                     ImGui.EndMenu();
                 }
 
-                if (ImGui.BeginMenu("Donate (捐)"))
+                if (ImGui.BeginMenu("Donate"))
                 {
-                    ImGuiHelper.DisplayTextAndCopyOnClick("BTC: bc1qke67907s6d5k3cm7lx7m020chyjp9e8ysfwtuz (click to copy)",
-                        "bc1qke67907s6d5k3cm7lx7m020chyjp9e8ysfwtuz");
-                    ImGuiHelper.DisplayTextAndCopyOnClick("ETH: 0x3A37B3f57453555C2ceabb1a2A4f55E0eB969105 (click to copy)",
-                        "0x3A37B3f57453555C2ceabb1a2A4f55E0eB969105");
+                    ImGuiHelper.DisplayTextAndCopyOnClick("BTC: bc1qf2nk0q8p30awmaahtyvzvrlnm6h55r3zc5g0nw (click to copy)",
+                        "bc1qf2nk0q8p30awmaahtyvzvrlnm6h55r3zc5g0nw");
+                    ImGuiHelper.DisplayTextAndCopyOnClick("ETH: 0xa3a44C5Cf64E5BcD74513Fd9627efa2101661f14 (click to copy)",
+                        "0xa3a44C5Cf64E5BcD74513Fd9627efa2101661f14");
                     ImGui.EndMenu();
                 }
 
@@ -145,10 +145,8 @@ namespace GameHelper.Settings
         private static void DrawCoreSettings()
         {
             ImGui.PushTextWrapPos(ImGui.GetContentRegionAvail().X);
-            ImGui.TextColored(color, "This is a free software, only use https://ownedcore.com to " +
-                "download it. Do not buy from the fake sellers or websites.");
-            ImGui.TextColored(color, "请不要花钱购买本软件，否则你就是个傻逼。这是一个免费软件。" +
-                "不要从假卖家那里购买。前往 https://ownedcore.com 免费下载。");
+            ImGui.TextColored(color, "This is free software, if you purchased a copy you have been scammed");
+            ImGui.TextColored(color, "Download from github.com/KronosDesign/GameHelper2");
             ImGui.NewLine();
             ImGui.TextColored(Vector4.One, "Developer of this software is not responsible for " +
                               "any loss that may happen due to the usage of this software. Use this " +
@@ -485,10 +483,6 @@ namespace GameHelper.Settings
                     "do not go below 60 (due to server ticks), no matter how good your latency is.");
                 ImGuiHelper.NonContinuousEnumComboBox("Settings Window Key", ref Core.GHSettings.MainMenuHotKey);
                 ImGuiHelper.NonContinuousEnumComboBox("Disable Rendering Key", ref Core.GHSettings.DisableAllRenderingKey);
-                ImGui.Checkbox("I am using console controller to play the game.", ref Core.GHSettings.EnableControllerMode);
-                ImGuiHelper.ToolTip("This will disable AutoHotkeyTrigger plugin by ensuring all keyboard inputs " +
-                    "that AHK wants to send to the game doesn't reach the game. Feel free to disable that plugin " +
-                    " from top bar if you want to safe some cpu cycles.");
             }
         }
 

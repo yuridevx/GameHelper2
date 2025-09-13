@@ -15,22 +15,22 @@ namespace GameOffsets.Objects.UiElement
         // public StdVector ChildrensPtr; // both points to same children UiElements.
         // 4 childrens are cached here
 
-        [FieldOffset(0xB0)] public StdTuple2D<float> PositionModifier;
-        [FieldOffset(0xB8)] public byte ScaleIndex; // root = 3, child of root = 3 and first child of that child = 2
+        [FieldOffset(0xE0)] public StdTuple2D<float> PositionModifier;
         // Following Ptr is basically pointing to InGameState+0xXXX.
         // No idea what InGameState+0xXXX is pointing to
         // [FieldOffset(0x0C0)] public IntPtr UnknownPtr;
 
-        [FieldOffset(0xC8)] public IntPtr ParentPtr; // UiElement.
-        [FieldOffset(0xD0)] public StdTuple2D<float> RelativePosition; // variable
-        [FieldOffset(0xE8)] public float LocalScaleMultiplier;
+        [FieldOffset(0x108)] public IntPtr ParentPtr; // UiElement.
+        [FieldOffset(0x110)] public StdTuple2D<float> RelativePosition; // variable
+        [FieldOffset(0x12C)] public float LocalScaleMultiplier;
+        [FieldOffset(0x130)] public byte ScaleIndex; // root = 3, child of root = 3 and first child of that child = 2
 
         [FieldOffset(0x140)] public StdWString StringIdPtr;
         // TODO: 0x08 byte gap....not sure what's there
         // [FieldOffset(0x108)] public float Scale; // !!do not use this!!, this scale provided by game is wrong.
-        [FieldOffset(0x164)] public uint Flags; // variable
+        [FieldOffset(0x1B8)] public uint Flags; // variable
 
-        [FieldOffset(0x218)] public StdTuple2D<float> UnscaledSize; // variable
+        [FieldOffset(0x240)] public StdTuple2D<float> UnscaledSize; // variable
 
         // public uint BorderColor; // BackgroundColor - 0x04
         [FieldOffset(0x25C)] public uint BackgroundColor;

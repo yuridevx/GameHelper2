@@ -11,14 +11,14 @@ namespace GameOffsets.Objects.States.InGameState
     [StructLayout(LayoutKind.Explicit, Pack = 1)]
     public struct WorldDataOffset
     {
-        [FieldOffset(0xA0)] public IntPtr WorldAreaDetailsPtr;
-        [FieldOffset(0xA8)] public CameraStructure CameraStructurePtr;
+        [FieldOffset(0x98)] public IntPtr WorldAreaDetailsPtr;
+        [FieldOffset(0xA0)] public CameraStructure CameraStructurePtr;
     }
 
     [StructLayout(LayoutKind.Explicit, Pack = 1)]
     public struct WorldAreaDetailsStruct
     {
-        [FieldOffset(0x88)] public IntPtr WorldAreaDetailsRowPtr; // WorldArea.dat Offsets
+        [FieldOffset(0x90)] public IntPtr WorldAreaDetailsRowPtr; // WorldArea.dat Offsets
     }
 
     [StructLayout(LayoutKind.Explicit, Pack = 1)]
