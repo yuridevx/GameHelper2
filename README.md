@@ -1,6 +1,6 @@
 # GameHelper2 - PoE2 External Overlay
 
-[![GameHelper Discord](https://dcbadge.limes.pink/api/server/https://discord.gg/RShVpaEBV3?style=flat)](https://discord.gg/RShVpaEBV3) [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![GameHelper Discord](https://img.shields.io/discord/1414482159024210033?style=flat&logo=Discord&logoColor=%23fff&label=GameHelper2)](https://discord.gg/RShVpaEBV3) [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 GameHelper2 is an advanced external overlay and automation tool for Path of Exile 2, providing real-time game information, automated triggers, and quality-of-life features to enhance your gameplay experience. It was originally created by [GameHelper](https://www.ownedcore.com/forums/members/1040190-gamehelper.html) and is now an actively maintained community project released under the GPLv3 licence.
 
