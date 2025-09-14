@@ -1,102 +1,288 @@
 ﻿namespace Launcher
 {
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
+    using System.IO.Compression;
     using System.Net.Http;
     using System.Threading.Tasks;
+    using Newtonsoft.Json.Linq;
 
     public static class AutoUpdate
     {
-        private static readonly HttpClient Client = new();
-        private static string post_url = "https://www.ownedcore.com/forums/mmo/path-of-exile/poe-bots-programs/953353-gamehelper-light-version-of-poehud-exile-api.html#post4325338";
-        private static string login_url = "https://www.ownedcore.com/forums/login.php?do=login";
-        private static string version_file_name = "VERSION.txt";
-        private static string self_exe_name = AppDomain.CurrentDomain.FriendlyName;
+        private const string VersionUrl = "https://raw.githubusercontent.com/KronosDesign/GameHelper2/refs/heads/main/VERSION.txt";
+        private const string ReleasesApiUrl = "https://api.github.com/repos/KronosDesign/GameHelper2/releases";
+        
+        private static readonly HttpClient HttpClient = new();
+        private static string extractedPath;
+        private static string newVersion;
 
-        public static async Task<(bool, string)> IsNewVersionFoundAsync(string gameHelperDir)
+        static AutoUpdate()
         {
-            var versionFile = Path.Combine(gameHelperDir, version_file_name);
-            if (!File.Exists(versionFile))
-            {
-                Console.WriteLine($"{versionFile} is missing, skipping upgrade process.");
-                return (false, string.Empty);
-            }
+            HttpClient.DefaultRequestHeaders.Add("User-Agent", "GameHelper-Launcher");
+        }
 
-            var currentVersion = File.ReadAllText(versionFile).Trim();
-
+        public static async Task<bool> CheckAndUpdateAsync()
+        {
             try
             {
-                var body = await Client.GetStringAsync(post_url);
-                var downloadUrlStart = body.IndexOf("&gt;&gt;&gt; <a href=\"") + "&gt;&gt;&gt; <a href=\"".Length;
-                var downloadUrlEnd = body.IndexOf("-zip", downloadUrlStart) + "-zip".Length;
-                var versionStart = body.IndexOf("GameHelper-Release-") + "GameHelper-Release-".Length;
-                var versionEnd = body.IndexOf(".zip", versionStart);
-                if (body.AsSpan(versionStart, versionEnd - versionStart).ToString() != currentVersion)
+                Console.WriteLine("Checking for updates...");
+
+                var currentVersion = GetCurrentVersion();
+                Console.WriteLine($"Current version: {currentVersion}");
+
+                var latestVersion = await GetLatestVersionAsync();
+                if (string.IsNullOrEmpty(latestVersion))
                 {
-                    return (true, body[downloadUrlStart..downloadUrlEnd]);
+                    Console.WriteLine("Failed to check for updates.");
+                    return false;
                 }
-                else
+                Console.WriteLine($"Latest version: {latestVersion}");
+
+                if (IsNewerVersion(latestVersion, currentVersion))
                 {
-                    return (false, string.Empty);
+                    Console.WriteLine($"New version available: {latestVersion}");
+                    return await DownloadAndInstallUpdateAsync(latestVersion);
                 }
+
+                Console.WriteLine("No updates were found.");
+                return false;
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Failed to determine IsNewVersionFound due to " + ex.Message);
+                Console.WriteLine($"Update check failed: {ex.Message}");
+                return false;
             }
-
-            return (false, string.Empty);
         }
 
-        public static async Task<bool> UpgradeGameHelper(string gameHelperDir, string downloadUrl, string username, string passwordMD5)
+        private static string GetCurrentVersion()
         {
-            Console.WriteLine("Signing into ownedcore website.");
-            using var resp = await Client.PostAsync(login_url, new FormUrlEncodedContent(new Dictionary<string, string>()
-            {
-                { "vb_login_username", username },
-                { "vb_login_md5password", passwordMD5 },
-                { "do", "login" },
-                { "cookieuser", "1" }
-            }));
+            var versionFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "VERSION.txt");
+            Console.WriteLine($"Version file: {versionFile}");
+            return File.Exists(versionFile) ? File.ReadAllText(versionFile).Trim() : "Dev";
+        }
 
-            var respMsg = resp.EnsureSuccessStatusCode();
-            if (!resp.Headers.TryGetValues("set-cookie", out var loginCookies))
+        private static async Task<string> GetLatestVersionAsync()
+        {
+            try
             {
-                Console.WriteLine("No cookies found. Failed to login into ownedcore website.");
-                return false;
-
+                var response = await HttpClient.GetStringAsync(VersionUrl);
+                return response.Trim();
             }
-
-            Console.WriteLine($"Downloading new version from:{downloadUrl}");
-            bool isLoginCookieFound = false;
-            foreach (var cookie in loginCookies)
+            catch (Exception ex)
             {
-                if (cookie.Contains("ocf_userid") || cookie.Contains("ocf_password"))
+                Console.WriteLine($"Failed to get latest version: {ex.Message}");
+                return null;
+            }
+        }
+
+        private static bool IsNewerVersion(string latestVersion, string currentVersion)
+        {
+            try
+            {
+                if (!latestVersion.StartsWith('v'))
+                    return false;
+                
+                var latest = latestVersion.TrimStart('v');
+                var current = currentVersion.TrimStart('v');
+
+                var latestParts = latest.Split('.');
+                var currentParts = current.Split('.');
+
+                for (int i = 0; i < Math.Max(latestParts.Length, currentParts.Length); i++)
                 {
-                    isLoginCookieFound = true;
+                    int latestPart = i < latestParts.Length ? int.Parse(latestParts[i]) : 0;
+                    int currentPart = i < currentParts.Length ? int.Parse(currentParts[i]) : 0;
+
+                    if (latestPart > currentPart) return true;
+                    if (latestPart < currentPart) return false;
                 }
 
-                Client.DefaultRequestHeaders.Add("Cookie", cookie[..cookie.IndexOf(';')]);
-            }
-
-            if (!isLoginCookieFound)
-            {
-                Console.WriteLine("Login cookie not found. Failed to login into ownedcore website.");
                 return false;
             }
+            catch
+            {
+                return false;
+            }
+        }
 
-            var release_file_name = "release.zip";
-            using var respDownloadFile = await Client.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead);
-            using var fs = new FileStream(release_file_name, FileMode.Create);
-            await respDownloadFile.Content.CopyToAsync(fs);
+        private static async Task<bool> DownloadAndInstallUpdateAsync(string version)
+        {
+            try
+            {
+                var downloadUrl = await GetDownloadUrlForVersionAsync(version);
+                if (string.IsNullOrEmpty(downloadUrl))
+                {
+                    Console.WriteLine("Failed to get download URL for the update.");
+                    return false;
+                }
 
-            Process.Start("powershell.exe", $"Start-sleep -Seconds 3; " +
-                $"Expand-Archive -Force {release_file_name} .; " +
-                $"Remove-Item -Force {release_file_name}; " +
-                $"./{self_exe_name}.exe -Force");
-            return true;
+                var tempDir = Path.Combine(Path.GetTempPath(), "GameHelperUpdate");
+                if (Directory.Exists(tempDir))
+                {
+                    Directory.Delete(tempDir, true);
+                }
+                Directory.CreateDirectory(tempDir);
+
+                var zipPath = Path.Combine(tempDir, "update.zip");
+
+                Console.WriteLine("Downloading update...");
+                await DownloadFileWithProgressAsync(downloadUrl, zipPath);
+
+                Console.WriteLine("Extracting update...");
+                var extractDir = Path.Combine(tempDir, "extracted");
+                ZipFile.ExtractToDirectory(zipPath, extractDir);
+
+                extractedPath = extractDir;
+                newVersion = version;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Update preparation failed: {ex.Message}");
+                return false;
+            }
+        }
+
+        private static async Task<string> GetDownloadUrlForVersionAsync(string version)
+        {
+            try
+            {
+                var response = await HttpClient.GetStringAsync(ReleasesApiUrl);
+                var releases = JArray.Parse(response);
+
+                foreach (var release in releases)
+                {
+                    var tagName = release["tag_name"]?.ToString();
+                    if (tagName == version)
+                    {
+                        var assets = release["assets"] as JArray;
+                        if (assets?.Count > 0)
+                        {
+                            return assets[0]["browser_download_url"]?.ToString();
+                        }
+                    }
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to get download URL: {ex.Message}");
+                return null;
+            }
+        }
+
+        private static async Task DownloadFileWithProgressAsync(string url, string destinationPath)
+        {
+            using (var response = await HttpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead))
+            {
+                response.EnsureSuccessStatusCode();
+
+                var totalBytes = response.Content.Headers.ContentLength ?? -1L;
+                await using (var contentStream = await response.Content.ReadAsStreamAsync())
+                {
+                    await using (var fileStream = new FileStream(destinationPath, FileMode.Create, FileAccess.Write, FileShare.None))
+                    {
+                        var buffer = new byte[8192];
+                        long totalDownloaded = 0;
+                        int bytesRead;
+
+                        while ((bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                        {
+                            await fileStream.WriteAsync(buffer, 0, bytesRead);
+                            totalDownloaded += bytesRead;
+
+                            if (totalBytes > 0)
+                            {
+                                var percentage = (int)((totalDownloaded * 100) / totalBytes);
+                                DrawProgressBar(percentage, 50);
+                            }
+                        }
+                    }
+                }
+            }
+            Console.WriteLine();
+        }
+
+        private static void DrawProgressBar(int percentage, int barLength)
+        {
+            var filled = (int)((percentage / 100.0) * barLength);
+            var bar = new string('█', filled) + new string('░', barLength - filled);
+
+            Console.Write($"\r[{bar}] {percentage}%");
+        }
+
+        public static void LaunchUpdateAndExit()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(extractedPath) || string.IsNullOrEmpty(newVersion))
+                {
+                    Console.WriteLine("Update paths not initialized.");
+                    return;
+                }
+
+                var currentDir = AppDomain.CurrentDomain.BaseDirectory;
+                var parentDir = Directory.GetParent(currentDir)?.FullName;
+                var launcherPath = Path.Combine(currentDir, "Launcher.exe");
+                var tempDir = Path.Combine(Path.GetTempPath(), "GameHelperUpdate");
+
+                if (string.IsNullOrEmpty(parentDir))
+                {
+                    Console.WriteLine("Could not determine installation directory.");
+                    return;
+                }
+
+                var psCommand = $@"
+Write-Host 'Waiting for GameHelper Launcher to exit...';
+$launcherProcess = Get-Process -Name 'Launcher' -ErrorAction SilentlyContinue;
+if ($launcherProcess) {{
+    Wait-Process -Name 'Launcher' -ErrorAction SilentlyContinue;
+    Write-Host 'Launcher has exited.';
+}} else {{
+    Write-Host 'Launcher process not found, proceeding...';
+}}
+
+Write-Host 'Installing update...';
+try {{
+    Copy-Item -Path '{extractedPath}\*' -Destination '{parentDir}' -Recurse -Force;
+    Write-Host 'Update completed successfully!';
+    Write-Host 'Restarting GameHelper Launcher...';
+    Start-Process -FilePath '{launcherPath}' -WorkingDirectory '{currentDir}';
+    $timeout = 0;
+    do {{
+        Start-Sleep -Milliseconds 100;
+        $newLauncherProcess = Get-Process -Name 'Launcher' -ErrorAction SilentlyContinue;
+        $timeout++;
+    }} while (-not $newLauncherProcess -and $timeout -lt 10);
+    if ($newLauncherProcess) {{
+        Write-Host 'Launcher restarted successfully.';
+    }} else {{
+        Write-Host 'Warning: Could not verify launcher restart.';
+    }}
+    Remove-Item -Path '{tempDir}' -Recurse -Force -ErrorAction SilentlyContinue;
+    Write-Host 'Update process completed.';
+}} catch {{
+    Write-Host 'Update failed:' $_.Exception.Message;
+    Read-Host 'Press Enter to continue';
+}}";
+
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "powershell.exe",
+                    Arguments = $"-NoProfile -ExecutionPolicy Bypass -Command \"{psCommand}\"",
+                    UseShellExecute = true,
+                    WindowStyle = ProcessWindowStyle.Normal,
+                    CreateNoWindow = false
+                });
+
+                Console.WriteLine("Updating GameHelper. Launcher will restart after update is completed.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to launch update process: {ex.Message}");
+            }
         }
     }
 }
