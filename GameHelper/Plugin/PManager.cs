@@ -14,6 +14,7 @@ namespace GameHelper.Plugin
     using CoroutineEvents;
     using CTOUtils = ClickableTransparentOverlay.Win32.Utils;
     using Settings;
+    using Ui;
     using Utils;
 
     internal record PluginWithName(string Name, IPCore Plugin);
@@ -260,6 +261,7 @@ namespace GameHelper.Plugin
                 {
                     if (container.Metadata.Enable)
                     {
+                        using var _ = PerformanceProfiler.Profile(container.Plugin.GetType().FullName, "DrawUI");
                         container.Plugin.DrawUI();
                     }
                 }

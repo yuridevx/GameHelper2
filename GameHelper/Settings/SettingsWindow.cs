@@ -510,6 +510,7 @@ namespace GameHelper.Settings
 
                 ImGui.Checkbox("Game UiExplorer (GE)", ref Core.GHSettings.ShowGameUiExplorer);
                 ImGui.Checkbox("Data Visualization (DV)", ref Core.GHSettings.ShowDataVisualization);
+                ImGui.Checkbox("Performance Profiler", ref Core.GHSettings.ShowPerfProfiler);
 #if DEBUG
                 ImGui.Checkbox("Krangled Passive Detector", ref Core.GHSettings.ShowKrangledPassiveDetector);
 #endif

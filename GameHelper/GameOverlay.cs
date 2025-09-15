@@ -22,17 +22,14 @@ namespace GameHelper
         ///     Initializes a new instance of the <see cref="GameOverlay" /> class.
         /// </summary>
         internal GameOverlay(string windowTitle)
-#if DEBUG
-            : base(windowTitle, true)
-#else
             : base(windowTitle, true, 3840, 2160)
-#endif
         {
             CoroutineHandler.Start(this.UpdateOverlayBounds(), priority: int.MaxValue);
             SettingsWindow.InitializeCoroutines();
             PerformanceStats.InitializeCoroutines();
             DataVisualization.InitializeCoroutines();
             GameUiExplorer.InitializeCoroutines();
+            PerformanceProfiler.InitializeCoroutines();
             OverlayKiller.InitializeCoroutines();
             NearbyVisualization.InitializeCoroutines();
             KrangledPassiveDetector.InitializeCoroutines();
@@ -88,10 +85,12 @@ namespace GameHelper
         /// <inheritdoc />
         protected override void Render()
         {
+            PerformanceProfiler.StartFrame();
             CoroutineHandler.Tick(ImGui.GetIO().DeltaTime);
             CoroutineHandler.RaiseEvent(GameHelperEvents.PerFrameDataUpdate);
             CoroutineHandler.RaiseEvent(GameHelperEvents.PostPerFrameDataUpdate);
             CoroutineHandler.RaiseEvent(GameHelperEvents.OnRender);
+            CoroutineHandler.RaiseEvent(GameHelperEvents.OnPostRender);
             if (!Core.GHSettings.IsOverlayRunning)
             {
                 this.Close();
