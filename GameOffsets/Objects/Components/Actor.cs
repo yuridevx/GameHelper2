@@ -11,8 +11,8 @@ namespace GameOffsets.Objects.Components
         [FieldOffset(0x368)] public int AnimationId;
         [FieldOffset(0xAB8)] public StdVector ActiveSkillsPtr; // ActiveSkillStructure // take and remove skill gem.
         [FieldOffset(0xAD0)] public StdVector CooldownsPtr;
-        [FieldOffset(0xA70)] public StdVector VaalSoulsPtr;
-        [FieldOffset(0xBC0)] public StdVector DeployedEntityArray; // DeployedEntityStructure
+        // [FieldOffset(0xA70)] public StdVector VaalSoulsPtr;
+        [FieldOffset(0xBC8)] public StdVector DeployedEntityArray; // DeployedEntityStructure
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -32,7 +32,7 @@ namespace GameOffsets.Objects.Components
         //[FieldOffset(0x14)] public int Pad0x14;
         [FieldOffset(0x18)] public IntPtr GrantedEffectsPerLevelDatRow;
         [FieldOffset(0x20)] public IntPtr ActiveSkillsDatPtr; // this is just a placeholder. Caller is suppose to update this one.
-        [FieldOffset(0x28)] public int CurrentVaalSouls; // this is just a placeholder. Caller is suppose to update this one.
+        //[FieldOffset(0x28)] public int CurrentVaalSouls; // this is just a placeholder. Caller is suppose to update this one.
         //[FieldOffset(0x20)] public IntPtr UselessPtr1;
         //[FieldOffset(0x28)] public IntPtr Pad0x28;
         [FieldOffset(0x30)] public IntPtr GrantedEffectStatSetsPerLevelDatRow;

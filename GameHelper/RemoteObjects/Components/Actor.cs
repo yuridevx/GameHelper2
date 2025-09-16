@@ -17,7 +17,7 @@ namespace GameHelper.RemoteObjects.Components
     /// </summary>
     public class Actor : ComponentBase
     {
-        private Dictionary<IntPtr, VaalSoulStructure> ActiveSkillsVaalSouls { get; } = new();
+        // private Dictionary<IntPtr, VaalSoulStructure> ActiveSkillsVaalSouls { get; } = new();
 
         private Dictionary<uint, ActiveSkillCooldown> ActiveSkillCooldowns { get; } = new();
 
@@ -55,20 +55,20 @@ namespace GameHelper.RemoteObjects.Components
         {
             base.ToImGui();
             ImGui.Text($"AnimationId: {this.Animation}");
-            if (ImGui.TreeNode("Vaal Souls"))
-            {
-                foreach(var (skillNamePtr, skillDetails) in this.ActiveSkillsVaalSouls)
-                {
-                    if (ImGui.TreeNode($"{skillNamePtr.ToInt64():X}"))
-                    {
-                        ImGui.Text($"Required Souls: {skillDetails.RequiredSouls}");
-                        ImGui.Text($"Current Souls: {skillDetails.CurrentSouls}");
-                        ImGui.TreePop();
-                    }
-                }
-
-                ImGui.TreePop();
-            }
+            // if (ImGui.TreeNode("Vaal Souls"))
+            // {
+            //     foreach(var (skillNamePtr, skillDetails) in this.ActiveSkillsVaalSouls)
+            //     {
+            //         if (ImGui.TreeNode($"{skillNamePtr.ToInt64():X}"))
+            //         {
+            //             ImGui.Text($"Required Souls: {skillDetails.RequiredSouls}");
+            //             ImGui.Text($"Current Souls: {skillDetails.CurrentSouls}");
+            //             ImGui.TreePop();
+            //         }
+            //     }
+            //
+            //     ImGui.TreePop();
+            // }
 
             if (ImGui.TreeNode("Cooldowns"))
             {
@@ -117,7 +117,7 @@ namespace GameHelper.RemoteObjects.Components
                         ImGuiHelper.IntPtrToImGui("Granted Effect Stat Sets Per Level Ptr", skilldetails.GrantedEffectStatSetsPerLevelDatRow);
                         //ImGui.Text($"Can be used with weapons: {skilldetails.CanBeUsedWithWeapon}");
                         //ImGui.Text($"Can not be used: {skilldetails.CannotBeUsed}");
-                        ImGui.Text($"Current Vaal Soul (-1 if not vaal skill): {skilldetails.CurrentVaalSouls}");
+                        //ImGui.Text($"Current Vaal Soul (-1 if not vaal skill): {skilldetails.CurrentVaalSouls}");
                         //ImGui.Text($"Unknown0: {skilldetails.UnknownByte0}");
                         //ImGui.Text($"Unknown1: {skilldetails.UnknownByte1}");
                         //ImGui.Text($"Total Uses: {skilldetails.TotalUses}");
@@ -164,11 +164,11 @@ namespace GameHelper.RemoteObjects.Components
             this.OwnerEntityAddress = data.Header.EntityPtr;
             this.Animation = data.AnimationId;
             this.IsSkillUsable.Clear();
-            var skillsvaalsouls = reader.ReadStdVector<VaalSoulStructure>(data.VaalSoulsPtr);
-            for (var i = 0; i < skillsvaalsouls.Length; i++)
-            {
-                this.ActiveSkillsVaalSouls[skillsvaalsouls[i].ActiveSkillsDatPtr] = skillsvaalsouls[i];
-            }
+            // var skillsvaalsouls = reader.ReadStdVector<VaalSoulStructure>(data.VaalSoulsPtr);
+            // for (var i = 0; i < skillsvaalsouls.Length; i++)
+            // {
+            //     this.ActiveSkillsVaalSouls[skillsvaalsouls[i].ActiveSkillsDatPtr] = skillsvaalsouls[i];
+            // }
 
             var cooldowns = reader.ReadStdVector<ActiveSkillCooldown>(data.CooldownsPtr);
             for (var i = 0; i < cooldowns.Length; i++)
@@ -197,17 +197,17 @@ namespace GameHelper.RemoteObjects.Components
                                         key).GrantedEffectDatPtr).ActiveSkillDatPtr);
                         });
 
-                    skillDetails.CurrentVaalSouls = -1;
+                    // skillDetails.CurrentVaalSouls = -1;
                     var cannotbeused = false;
                     if (this.ActiveSkillCooldowns.TryGetValue(skillDetails.UnknownIdAndEquipmentInfo, out var cooldownInfo))
                     {
                         cannotbeused |= cooldownInfo.CannotBeUsed();
                     }
-                    else if (this.ActiveSkillsVaalSouls.TryGetValue(skillDetails.ActiveSkillsDatPtr, out var vaalSoulInfo))
-                    {
-                        skillDetails.CurrentVaalSouls = vaalSoulInfo.CurrentSouls;
-                        cannotbeused |= vaalSoulInfo.CannotBeUsed();
-                    }
+                    // else if (this.ActiveSkillsVaalSouls.TryGetValue(skillDetails.ActiveSkillsDatPtr, out var vaalSoulInfo))
+                    // {
+                    //     skillDetails.CurrentVaalSouls = vaalSoulInfo.CurrentSouls;
+                    //     cannotbeused |= vaalSoulInfo.CannotBeUsed();
+                    // }
 
                     this.ActiveSkills[name] = skillDetails;
                     if (cannotbeused)
