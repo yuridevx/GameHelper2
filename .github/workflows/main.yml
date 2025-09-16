@@ -15,8 +15,6 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      with:
-        fetch-depth: 0  # Fetch all history for changelog generation
     
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -27,7 +25,7 @@ jobs:
       run: dotnet restore GameOverlay.sln
     
     - name: Build solution in Release mode
-      run: dotnet build GameOverlay.sln --configuration Release --no-restore
+      run: dotnet build GameOverlay.sln --configuration Release -p:Version=${{ replace(github.ref_name, 'v', '') }} --no-restore
     
     - name: Create release artifacts
       run: |

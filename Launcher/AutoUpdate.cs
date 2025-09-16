@@ -10,7 +10,6 @@
 
     public static class AutoUpdate
     {
-        private const string VersionUrl = "https://raw.githubusercontent.com/KronosDesign/GameHelper2/refs/heads/main/VERSION.txt";
         private const string ReleasesApiUrl = "https://api.github.com/repos/KronosDesign/GameHelper2/releases";
         
         private static readonly HttpClient HttpClient = new();
@@ -22,29 +21,26 @@
             HttpClient.DefaultRequestHeaders.Add("User-Agent", "GameHelper-Launcher");
         }
 
-        public static async Task<bool> CheckAndUpdateAsync()
+        public static async Task<bool> CheckAndUpdateAsync(string gameHelperExePath)
         {
             try
             {
                 Console.WriteLine("Checking for updates...");
-
-                var currentVersion = GetCurrentVersion();
-                Console.WriteLine($"Current version: {currentVersion}");
-
+ 
+                var currentVersion = GetCurrentVersion(gameHelperExePath);
                 var latestVersion = await GetLatestVersionAsync();
                 if (string.IsNullOrEmpty(latestVersion))
                 {
                     Console.WriteLine("Failed to check for updates.");
                     return false;
                 }
-                Console.WriteLine($"Latest version: {latestVersion}");
-
+ 
                 if (IsNewerVersion(latestVersion, currentVersion))
                 {
                     Console.WriteLine($"New version available: {latestVersion}");
                     return await DownloadAndInstallUpdateAsync(latestVersion);
                 }
-
+ 
                 Console.WriteLine("No updates were found.");
                 return false;
             }
@@ -55,19 +51,37 @@
             }
         }
 
-        private static string GetCurrentVersion()
+        private static string GetCurrentVersion(string gameHelperExePath)
         {
-            var versionFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "VERSION.txt");
-            Console.WriteLine($"Version file: {versionFile}");
-            return File.Exists(versionFile) ? File.ReadAllText(versionFile).Trim() : "Dev";
+            try
+            {
+                var versionInfo = FileVersionInfo.GetVersionInfo(gameHelperExePath);
+                var version = versionInfo.FileVersion;
+                if (string.IsNullOrEmpty(version) || version == "1.0.0.0")
+                {
+                    return "Dev";
+                }
+                var parts = version.Split('.');
+                return $"v{parts[0]}.{parts[1]}.{parts[2]}";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to read version from {gameHelperExePath}: {ex.Message}");
+                return "Dev";
+            }
         }
 
         private static async Task<string> GetLatestVersionAsync()
         {
             try
             {
-                var response = await HttpClient.GetStringAsync(VersionUrl);
-                return response.Trim();
+                var response = await HttpClient.GetStringAsync(ReleasesApiUrl);
+                var releases = JArray.Parse(response);
+                if (releases.Count > 0)
+                {
+                    return releases[0]["tag_name"]?.ToString() ?? null;
+                }
+                return null;
             }
             catch (Exception ex)
             {
