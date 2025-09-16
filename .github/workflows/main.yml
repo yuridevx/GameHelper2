@@ -24,8 +24,14 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore GameOverlay.sln
     
+    - name: Set build version
+      shell: pwsh
+      run: |
+        $version = "${{ github.ref_name }}" -replace '^v', ''
+        echo "VERSION=$version" >> $env:GITHUB_ENV
+    
     - name: Build solution in Release mode
-      run: dotnet build GameOverlay.sln --configuration Release -p:Version=${{ replace(github.ref_name, 'v', '') }} --no-restore
+      run: dotnet build GameOverlay.sln --configuration Release -p:Version=$env:VERSION --no-restore
     
     - name: Create release artifacts
       run: |
