@@ -6,8 +6,8 @@ namespace GameHelper
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Reflection;
+    using System.Diagnostics;
     using Coroutine;
     using CoroutineEvents;
     using GameHelper.Cache;
@@ -102,10 +102,21 @@ namespace GameHelper
         {
             try
             {
-                version = File.ReadAllText("VERSION.txt");
+                var versionInfo = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
+                var versionStr = versionInfo.FileVersion;
+                if (string.IsNullOrEmpty(versionStr) || versionStr == "1.0.0.0")
+                {
+                    version = "Dev";
+                }
+                else
+                {
+                    var parts = versionStr.Split('.');
+                    version = $"v{parts[0]}.{parts[1]}.{parts[2]}";
+                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine($"Failed to read GameHelper version: {ex.Message}.");
                 version = "Dev";
             }
         }

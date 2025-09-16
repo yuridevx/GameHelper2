@@ -19,7 +19,7 @@ namespace Launcher
                 return;
             }
             
-            var updateAvailable = await AutoUpdate.CheckAndUpdateAsync();
+            var updateAvailable = await AutoUpdate.CheckAndUpdateAsync(gameHelperLoc);
             if (updateAvailable)
             {
                 AutoUpdate.LaunchUpdateAndExit();
@@ -36,7 +36,7 @@ namespace Launcher
                 {
                     Console.WriteLine(message);
                     Console.Write("Press any key to ignore this warning.");
-                    Console.ReadLine();
+                    Console.ReadKey();
                 }
             
                 var gameHelperPath = GameHelperTransformer.TransformGameHelperExecutable(gameHelperDir, gameHelperLoc, newName);
