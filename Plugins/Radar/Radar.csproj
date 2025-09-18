@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GameHelper\GameHelper.csproj">
+    <ProjectReference Include="..\..\GameHelper\GameHelper.csproj">
       <Private>false</Private>
       <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
     </ProjectReference>
@@ -39,7 +39,7 @@
   </ItemGroup>
 
   <Target Name="CopyFiles" AfterTargets="Build">
-    <Copy SourceFiles="$(OutDir)$(TargetName)$(TargetExt); $(OutDir)$(TargetName).pdb; $(OutDir)icons.png; $(OutDir)important_tgt_files.txt" DestinationFolder="..\GameHelper\$(OutDir)Plugins\$(ProjectName)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(OutDir)$(TargetName)$(TargetExt); $(OutDir)$(TargetName).pdb; $(OutDir)icons.png; $(OutDir)important_tgt_files.txt" DestinationFolder="..\..\GameHelper\$(OutDir)Plugins\$(ProjectName)" SkipUnchangedFiles="true" />
   </Target>
 
 </Project>
