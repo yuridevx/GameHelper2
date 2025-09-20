@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GameHelper\GameHelper.csproj">
+    <ProjectReference Include="..\..\GameHelper\GameHelper.csproj">
       <Private>false</Private>
       <ExcludeAssets>runtime</ExcludeAssets>
       <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <Target Name="CopyFiles" AfterTargets="Build">
-    <Copy SourceFiles="$(OutDir)$(TargetName)$(TargetExt);$(OutDir)$(TargetName).pdb;$(OutDir)StatusEffectGroup.json;$(OutDir)System.Linq.Dynamic.Core.dll;" DestinationFolder="..\GameHelper\$(OutDir)Plugins\$(ProjectName)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(OutDir)$(TargetName)$(TargetExt);$(OutDir)$(TargetName).pdb;$(OutDir)StatusEffectGroup.json;$(OutDir)System.Linq.Dynamic.Core.dll;" DestinationFolder="..\..\GameHelper\$(OutDir)Plugins\$(ProjectName)" SkipUnchangedFiles="true" />
   </Target>
 
 </Project>
