@@ -42,8 +42,8 @@ namespace GameOffsets.Objects.Components
         //[FieldOffset(0x81)] public bool CannotBeUsed;
         //[FieldOffset(0x82)] public byte UnknownByte0;
         //[FieldOffset(0x83)] public byte UnknownByte1;
-        //[FieldOffset(0x84)] public int TotalUses;
-        //[FieldOffset(0x8C)] public int TotalCooldownTimeInMs;
+        [FieldOffset(0x98)] public int TotalUses;
+        [FieldOffset(0xA8)] public int TotalCooldownTimeInMs;
         //[FieldOffset(0x9C)] public int SoulsPerUse;
         //[FieldOffset(0xA0)] public int TotalVaalUses;
         //[FieldOffset(0xB0)] public IntPtr StatsPtr;
