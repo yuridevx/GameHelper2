@@ -120,8 +120,8 @@ namespace GameHelper.RemoteObjects.Components
                         //ImGui.Text($"Current Vaal Soul (-1 if not vaal skill): {skilldetails.CurrentVaalSouls}");
                         //ImGui.Text($"Unknown0: {skilldetails.UnknownByte0}");
                         //ImGui.Text($"Unknown1: {skilldetails.UnknownByte1}");
-                        //ImGui.Text($"Total Uses: {skilldetails.TotalUses}");
-                        //ImGui.Text($"Cooldown Time (ms): {skilldetails.TotalCooldownTimeInMs}");
+                        ImGui.Text($"Total Uses: {skilldetails.TotalUses}");
+                        ImGui.Text($"Cooldown Time (ms): {skilldetails.TotalCooldownTimeInMs}");
                         //ImGui.Text($"Souls per use: {skilldetails.SoulsPerUse}");
                         //ImGui.Text($"Total Vaal Uses: {skilldetails.TotalVaalUses}");
                         ImGui.TreePop();
